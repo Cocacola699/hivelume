@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Hivelume</title>
+<style>
+:root{--ac:#f26b3a;--fs:15px;--rad:12px;--bg:#2b2725;--b2:#231f1d;--b3:#1a1715;--b4:#141110;--tx:#f2ede9;--mu:#a39a93}
+.light{--bg:#fff;--b2:#f4f1ee;--b3:#e8e3df;--b4:#ddd6d0;--tx:#1e1b19;--mu:#6b625b}
+.amoled{--bg:#000;--b2:#0a0a0a;--b3:#141414;--b4:#000}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}
+body{font:var(--fs)/1.4 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--b4);color:var(--tx);overflow:hidden}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#0007;border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--ac);border:0;border-radius:calc(var(--rad)*.7);padding:7px 12px;cursor:pointer;color:#fff;font-weight:600}
+button:hover{filter:brightness(1.1)}
+button.g{background:var(--b3);color:var(--tx);font-weight:400}button.r{background:#da373c}
+input,select,textarea{background:var(--b3);border:1px solid #8883;border-radius:8px;padding:8px;width:100%}
+input[type=color]{padding:0;height:36px}input[type=range]{padding:0;accent-color:var(--ac)}
+a{color:var(--ac)}.mu{color:var(--mu)}small{color:var(--mu)}
+#app{display:flex;height:100dvh}
+#side{width:330px;display:flex;flex:none;transition:transform .2s}
+#rail{width:72px;background:var(--b4);display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0;overflow-y:auto;flex:none}
+.sv{width:48px;height:48px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;cursor:pointer;position:relative;transition:border-radius .15s,background .15s;color:var(--tx);flex:none;user-select:none}
+.sv:hover,.sv.on{border-radius:16px;background:var(--ac);color:#fff}
+.sv.on::before{content:'';position:absolute;left:-12px;width:4px;height:36px;border-radius:0 4px 4px 0;background:var(--tx)}
+.sv.logo{background:var(--ac);color:#fff;font-size:26px}
+.sv em{position:absolute;right:-5px;bottom:-5px;background:#da373c;color:#fff;font-style:normal;font-size:11px;border-radius:99px;padding:0 5px;border:3px solid var(--b4)}
+.sv.add{color:#3ba55d;font-size:22px;font-weight:400}.sv.add:hover{background:#3ba55d;color:#fff}
+.sep{width:32px;height:2px;background:#8883;border-radius:2px;flex:none}
+#pan{flex:1;min-width:0;background:var(--b2);display:flex;flex-direction:column}
+#list{flex:1;overflow:auto;padding:0 8px 8px}
+h6{margin:16px 6px 4px;color:var(--mu);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+.rbn{height:92px;margin:0 -8px;background:repeating-linear-gradient(45deg,var(--ac) 0 16px,color-mix(in srgb,var(--ac) 82%,#fff) 16px 32px);display:flex;align-items:center;justify-content:center;font-size:40px}
+.rh{display:flex;align-items:center;gap:6px;padding:12px 6px 6px;font-weight:700;font-size:1.05em}
+.inv{display:block;width:100%;margin:6px 0;background:color-mix(in srgb,var(--ac) 22%,transparent);color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 45%,transparent)}
+.srch{display:block;width:100%;margin:10px 0 0;background:var(--b3);color:var(--mu);text-align:left;font-weight:400}
+.it{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:calc(var(--rad)*.6);cursor:pointer;color:var(--mu)}
+.it:hover{background:#8882;color:var(--tx)}.it.on{background:#8883;color:var(--tx)}
+.nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ch2 .nm{font-weight:600}.hi{width:20px;text-align:center}
+.it em{background:#da373c;color:#fff;border-radius:99px;padding:0 7px;font-style:normal;font-size:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3ba55d}
+.av{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.it .av{width:32px;height:32px;font-size:14px}
+.foot{display:flex;gap:4px;align-items:center;padding:8px;background:var(--b3)}
+.foot button{background:none;color:var(--mu);padding:6px 8px;font-size:17px}.foot button:hover{background:#8883;color:var(--tx)}
+#me{flex:1;min-width:0;display:flex;gap:8px;align-items:center;cursor:pointer;padding:4px;border-radius:8px}#me:hover{background:#8882}
+#me .av{width:34px;height:34px;font-size:14px}#me b{font-size:.92em}
+#main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg)}
+header{display:flex;align-items:center;gap:6px;padding:0 12px;height:54px;flex:none;background:var(--bg);box-shadow:0 1px 0 #0004,0 2px 4px #0002;z-index:1}header>div{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header button,header button.g{background:none;color:var(--mu);font-size:18px;padding:6px 8px}header button:hover{color:var(--tx)}
+#sub{margin-left:8px}
+#bk{display:none}#empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mu)}
+#empty h1{color:var(--ac);font-size:2.4em;margin:0}
+#chat{flex:1;display:flex;flex-direction:column;min-height:0}
+#msgs{flex:1;overflow-y:auto;padding:18px 0 8px;background-size:cover}
+.m{display:flex;gap:14px;padding:6px 16px;position:relative}.m:hover{background:#0000001c}
+.cp .m{padding:2px 16px}.cp .av{width:28px;height:28px}
+.mb{flex:1;min-width:0}.mb>small{margin-left:6px;font-size:.75em}.t{white-space:pre-wrap;word-break:break-word}
+.ax{display:none;position:absolute;right:16px;top:-14px;background:var(--b2);border:1px solid #0004;border-radius:8px;padding:3px 8px;gap:10px;cursor:pointer;box-shadow:0 2px 6px #0005;z-index:2}.m:hover .ax{display:flex}
+.bd{background:var(--ac);color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:1px 7px;margin:0 4px;vertical-align:1px}
+.qt{border-left:3px solid var(--ac);padding-left:6px;color:var(--mu);font-size:.85em}
+.mi{max-width:min(360px,100%);max-height:320px;border-radius:var(--rad);cursor:zoom-in;display:block;margin:6px 0;background:#0003;min-width:60px;min-height:40px}
+.vp{position:relative;display:inline-block;cursor:pointer;margin:4px 0}.vp video{max-width:min(360px,100%);max-height:260px;border-radius:var(--rad);display:block;pointer-events:none}
+.vp span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;text-shadow:0 0 8px #000}
+.fc{background:var(--b2);border:1px solid #0003;border-radius:8px;padding:8px 12px;display:inline-block;margin:3px 0}.dl{font-size:.9em}
+.re{display:flex;gap:4px;flex-wrap:wrap}.ch{background:var(--b2);border:1px solid #8882;border-radius:8px;padding:1px 8px;cursor:pointer;font-size:.88em;margin-top:4px}.ch:hover{border-color:#8886}.ch.me{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 20%,var(--b2))}
+.pl{background:var(--b2);border-radius:var(--rad);padding:10px;max-width:380px;margin:4px 0}
+.po{position:relative;margin:5px 0;padding:6px 10px;border-radius:8px;background:var(--b3);cursor:pointer;display:flex;justify-content:space-between;overflow:hidden;border:1px solid transparent}
+.po i{position:absolute;left:0;top:0;bottom:0;background:var(--ac);opacity:.35}.po span,.po small{position:relative}.po.my{border-color:var(--ac)}
+#rb{display:flex;align-items:center;gap:8px;padding:4px 12px;margin:0 16px;background:var(--b2);border-radius:8px 8px 0 0}#rb span{flex:1}
+#bar{display:flex;gap:2px;padding:6px;margin:0 16px 18px;align-items:flex-end;background:var(--b2);border-radius:10px}
+#bar button.g{background:none;color:var(--mu);font-size:18px;padding:6px 8px}#bar button.g:hover{color:var(--tx)}
+#bar textarea{resize:none;max-height:140px;flex:1;background:none;border:0;outline:none;padding:7px 6px}
+#mem{width:250px;background:var(--b2);overflow:auto;padding:4px 8px;flex:none}
+#mem .it{color:var(--tx)}.avw{position:relative;flex:none;display:flex}
+.sd{position:absolute;right:-2px;bottom:-2px;width:13px;height:13px;border-radius:50%;background:#80848e;border:3px solid var(--b2)}.sd.on{background:#3ba55d}
+#mo{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:50;padding:12px}
+#box{background:var(--bg);border-radius:var(--rad);padding:16px;width:440px;max-width:100%;max-height:90dvh;overflow:auto}
+#box h3{margin-top:0}#box .bn{border-radius:var(--rad);height:90px}.pv{text-align:center}.pv .av{width:80px;height:80px;margin:-40px auto 0;border:4px solid var(--bg);font-size:30px}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));font-size:24px;text-align:center}.eg span{cursor:pointer;padding:3px;border-radius:6px}.eg span:hover{background:#8883}
+.bgs{display:flex;gap:8px;flex-wrap:wrap}.bgs div{width:48px;height:48px;border-radius:10px;cursor:pointer;border:2px solid #8884}
+#lb{position:fixed;inset:0;background:#000e;z-index:60;display:flex;flex-direction:column;color:#fff}
+.lt,.vc{display:flex;gap:10px;align-items:center;padding:10px;justify-content:center}.lt span{flex:1}
+.ls{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.ls img,.ls video{max-width:100%;max-height:100%;transition:transform .15s}.ls img{cursor:zoom-in}
+.nv{position:absolute;font-size:44px;cursor:pointer;z-index:2;padding:10px;user-select:none}.vc input[type=range]{flex:1;max-width:420px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:8px 16px;border-radius:99px;z-index:99}
+@media(max-width:1100px){#mem{display:none!important}}
+@media(max-width:700px){#side{position:fixed;z-index:20;height:100dvh;width:min(340px,90%);transform:translateX(-100%)}#side.open{transform:none;box-shadow:0 0 0 100vw #0007}#bk{display:block}.ax{display:flex;opacity:.7}#bar,#rb{margin-left:8px;margin-right:8px}}
+#mo.dock{background:none;pointer-events:none;justify-content:flex-end}#mo.dock #box{pointer-events:auto;box-shadow:0 8px 40px #000a;width:340px}
+#cl{position:fixed;inset:0;background:#000e;z-index:70;display:flex;flex-direction:column;color:#fff}#cg{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;padding:8px;overflow:auto}#cg>div{background:#222;border-radius:12px;position:relative;min-height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden}#cg video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}#cg b{position:absolute;left:8px;bottom:6px;z-index:1;text-shadow:0 0 4px #000}#cb{display:flex;gap:10px;justify-content:center;padding:14px}
+@media(max-width:700px){#mo.dock{align-items:flex-end;justify-content:center}#mo.dock #box{width:100%;max-height:48dvh}}
+</style></head><body>
+<div id=app>
+<aside id=side>
+ <nav id=rail></nav>
+ <div id=pan>
+  <div id=list></div>
+  <div class=foot><div id=me onclick=prof(me)></div><button title="Copy my ID" onclick=copyId()>📋</button><button title=Settings onclick=setM()>⚙</button></div>
+ </div>
+</aside>
+<main id=main>
+ <header><button class=g id=bk onclick="$('#side').classList.toggle('open')">☰</button><div><b id=tt>Hivelume</b><small id=sub></small></div><button class=g onclick="startCall(0)" title="Voice call">📞</button><button class=g onclick="startCall(1)" title="Video call">🎥</button><button class=g onclick=info() title=Info>ⓘ</button></header>
+ <div id=empty><h1>⬡ Hivelume</h1><p>Peer-to-peer chat with no middleman.</p><p><button onclick=dmM()>Start a DM</button> <button onclick=roomM()>Create / join a group</button> <button class=g onclick=editP()>Edit profile</button> <button class=g onclick=setM()>Customize</button></p></div>
+ <div id=chat hidden>
+  <div id=msgs></div>
+  <div id=rb hidden><span></span><button class=g onclick="rep=null;$('#rb').hidden=true">✕</button></div>
+  <div id=bar><button class=g onclick="$('#fi').click()" title="Attach">＋</button><textarea id=in rows=1></textarea><button class=g onclick=pollM() title=Poll>📊</button><button class=g onclick="pick(e=>{$('#in').value+=e;$('#in').focus()})" title=Emoji>😊</button><button class=g onclick=sendText() title=Send>➤</button></div>
+ </div>
+</main>
+<aside id=mem hidden></aside>
+</div>
+<div id=mo hidden><div id=box></div></div><div id=lb hidden></div><div id=cl hidden></div><input type=file id=fi multiple hidden>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=boot;document.head.append(s)"></script>
+<script>
+const $=s=>document.querySelector(s),L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Storage full')}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7),sz=n=>n>1e6?(n/1e6).toFixed(1)+' MB':Math.ceil(n/1e3)+' KB';
+const NEW=!L('prof',null);let P=L('prof',{name:'User'+(Math.random()*900+100|0),bio:'',color:['#f26b3a','#eb459e','#3ba55d','#f0b132','#ed4245','#00b0f4'][Math.random()*6|0],em:'',av:'',bn:''}),CFG=L('cfg',{ac:'#f26b3a',th:'dark',bg:'',fs:15,rad:12,cp:0}),CH=L('chats',{}),PR=L('peers',{}),me=L('pid',0)||'nx'+Math.random().toString(36).slice(2,10),peer,conns={},cur=null,rep=null,vi=0,vl=[],T,LOCK=0,CHN={},calls={},LS=null,SV='home',ST='Connecting…',STC='#f0b132';
+if(CFG.ac=='#5865f2')CFG.ac='#f26b3a';
+S('pid',me);
+const save=()=>{try{localStorage.setItem('chats',JSON.stringify(CH,(k,v)=>k=='u'||k=='d'||k=='un'||k=='b'?undefined:v))}catch(e){}};
+function toast(t){let d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)}
+const EM='😀 😃 😄 😁 😆 😅 🤣 😂 🙂 😉 😊 😇 🥰 😍 🤩 😘 😋 😛 😜 🤪 🤗 🤔 🤨 😐 🙄 😏 😴 😎 🤓 😢 😭 😤 😡 😱 😳 🥺 😬 🤯 🥳 😈 👻 💀 👽 🤖 💩 🙈 🙊 👍 👎 👌 ✌️ 🤞 🤟 🤘 👏 🙌 🙏 💪 👀 🧠 ❤️ 🧡 💛 💚 💙 💜 🖤 💔 🔥 ✨ ⭐ 🌟 💯 ✅ ❌ 🎉 🎊 🎁 🏆 🎮 🎵 🎶 ☕ 🍕 🍔 🍟 🍿 🍺 🎂 🌈 ☀️ 🌙 ⚡ ❄️ 🌊 🐶 🐱 🐼 🦊 🐸 🐵 🦄 🚀 💻 📱 📸 🎬'.split(' ');
+/* ---------- helpers ---------- */
+const AV=p=>p.av?`<img class=av src="${p.av}">`:`<div class=av style="background:${esc(p.color||'#888')}">${esc(p.em||(p.name||'?')[0].toUpperCase())}</div>`,
+ avId=i=>AV(i==me?P:PR[i]||{name:i}),bnS=p=>p.bn?`background:url(${p.bn}) center/cover`:`background:linear-gradient(135deg,${p.color||'#f26b3a'},#000a)`,
+ isAdm=(c,i)=>i==c.host||c.admins.includes(i),
+ canSpeak=(c,i)=>c.type=='dm'||(c.members.includes(i)&&(c.mode=='admins'?isAdm(c,i):c.mode=='owner'?i==c.host:true)),
+ nm=c=>c.type=='dm'&&c.id==me?'📝 Notes to self':c.type=='dm'?(PR[c.id]?.name||c.id):c.name,
+ meta=c=>({id:c.id,type:'room',name:c.name,kind:c.kind,host:c.host,mode:c.mode,admins:c.admins,members:c.members}),
+ strip=m=>{if(!m.f)return m;let f={...m.f};delete f.u;delete f.b;delete f.d;return{...m,f}},
+ profs=c=>Object.fromEntries(c.members.map(i=>[i,i==me?P:PR[i]]).filter(x=>x[1])),
+ U=f=>f.d||f.u,
+ toData=b=>new Promise(r=>{let f=new FileReader();f.onload=()=>r(f.result);f.onerror=()=>r('');f.readAsDataURL(b)});
+/* blob: URLs are blocked in some embeds/previews, so media is also turned into a data: URL */
+function attach(f,bl){f.u=URL.createObjectURL(bl);if(bl.size<26e6)toData(bl).then(d=>{if(d){f.d=d;renderChat()}})}
+function ask(q,inp,val){return new Promise(r=>{modal(`<h3>${esc(q)}</h3>${inp?`<p><input id=ax2 value="${esc(val||'')}"></p>`:''}<p><button id=aok>OK</button> <button class=g id=acn>Cancel</button></p>`);let ok=()=>{closeM();r(inp?$('#ax2').value:true)};$('#aok').onclick=ok;$('#acn').onclick=()=>{closeM();r(inp?null:false)};if(inp){let x=$('#ax2');x.focus();x.select();x.onkeydown=e=>e.key=='Enter'&&ok()}})}
+function copyId(){try{navigator.clipboard.writeText(me).catch(()=>{})}catch(e){}modal(`<h3>Your ID</h3><p class=mu>Share this with a friend so they can DM you.</p><input readonly value="${me}" onclick=this.select()><p><button onclick=closeM()>Done</button></p>`)}
+function setSt(t,c){ST=t;STC=c;renderMe()}
+function shrink(f,w,h,cb){let r=new FileReader();r.onload=()=>{let i=new Image();i.onload=()=>{let c=document.createElement('canvas');c.width=w;c.height=h;let x=c.getContext('2d'),s=Math.max(w/i.width,h/i.height),dw=i.width*s,dh=i.height*s;x.drawImage(i,(w-dw)/2,(h-dh)/2,dw,dh);cb(c.toDataURL('image/jpeg',.82))};i.src=r.result};r.readAsDataURL(f)}
+function pickImg(w,h,cb){let i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>i.files[0]&&shrink(i.files[0],w,h,cb);i.click()}
+/* ---------- networking (PeerJS cloud server for signalling, data goes peer-to-peer) ---------- */
+function boot(){peer=new Peer(me);
+ peer.on('open',()=>{setSt('Online','#3ba55d');Object.values(CH).forEach(c=>{if(c.type!='room')return;c.members.forEach(m=>m!=me&&conn(m));c.host!=me&&send(c.host,{t:'join',r:c.id,p:P})})});
+ peer.on('connection',setup);peer.on('call',onCall);
+ peer.on('disconnected',()=>{setSt('Reconnecting…','#f0b132');try{peer.reconnect()}catch(e){}});
+ peer.on('error',e=>{if(e.type=='unavailable-id'){peer.destroy();me='nx'+Math.random().toString(36).slice(2,10);S('pid',me);boot()}else e.type!='peer-unavailable'&&toast('Network: '+e.type)})}
+function setup(c){c.on('open',()=>{conns[c.peer]=c;c.send({t:'hi',p:P});Object.values(CH).forEach(r=>{if(r.type=='room'&&r.members.includes(c.peer)&&r.members.includes(me))c.send({t:'hist',r:r.id,m:r.msgs.slice(-60).map(strip)})});render()});c.on('data',d=>onData(c.peer,d));c.on('close',()=>{if(conns[c.peer]==c)delete conns[c.peer];render()});c.on('error',()=>{})}
+function conn(id){let c=conns[id];if(!c){c=conns[id]=peer.connect(id,{reliable:true});setup(c);setTimeout(()=>{if(!c.open){if(conns[id]==c)delete conns[id];try{c.close()}catch(e){}}},9000)}return c}
+function send(id,o){if(!peer||!peer.open)return setTimeout(()=>send(id,o),800);let c=conn(id);c.open?c.send(o):c.once('open',()=>c.send(o))}
+function onData(from,d){
+ if(d.t=='hi'){PR[from]=d.p;S('peers',PR);Object.values(CH).forEach(c=>{if(c.type=='room'&&c.host==me&&c.members.includes(from))c.members.forEach(m=>m!=me&&m!=from&&send(m,{t:'prof',id:from,p:d.p}))});render()}
+ else if(d.t=='mesh'){let c=CH[d.r];c&&meshEv(c,d.ev,from)}else if(d.t=='hist'){let c=CH[d.r];if(c&&c.members&&c.members.includes(from)){let n=0;(d.m||[]).forEach(m=>{if(!c.msgs.some(x=>x.id==m.id)){c.msgs.push(m);n++}});if(n){c.msgs.sort((a,b)=>a.ts-b.ts);save();render()}}}else if(d.t=='prof'){PR[d.id]=d.p;S('peers',PR);render()}
+ else if(d.t=='dm'){let c=CH[from]||(CH[from]={id:from,type:'dm',msgs:[]});d.ev.by=from;if(d.ev.m)d.ev.m.by=from;apply(c,d.ev)}
+ else if(d.t=='req'){let c=CH[d.r];if(c&&c.host==me&&c.members.includes(from))hostEv(c,d.ev,from)}
+ else if(d.t=='ev'){let c=CH[d.r];if(c&&c.host==from)apply(c,d.ev)}
+ else if(d.t=='join'){let c=CH[d.r];if(!c||c.host!=me||(c.bans||[]).includes(from))return send(from,{t:'err',x:'Cannot join that room'});PR[from]=d.p;S('peers',PR);let nw=!c.members.includes(from);if(nw)c.members.push(from);send(from,{t:'state',r:meta(c),m:c.msgs.slice(-100).map(strip),pr:profs(c)});if(nw)c.members.forEach(m=>m!=me&&m!=from&&send(m,{t:'state',r:meta(c),pr:profs(c)}));save();render()}
+ else if(d.t=='state'){let r=d.r;if(r.host!=from)return;let c=CH[r.id]||(CH[r.id]={msgs:[]});Object.assign(c,r);(d.m||[]).forEach(m=>{if(!c.msgs.some(x=>x.id==m.id))c.msgs.push(m)});c.msgs.sort((a,b)=>a.ts-b.ts);Object.assign(PR,d.pr||{});S('peers',PR);save();render();if(d.m)toast('Joined '+c.name)}
+ else if(d.t=='err')toast(d.x)}
+/* host is the authority of a room: validates, applies and relays every event */
+function okEv(c,ev,from){let adm=isAdm(c,from),own=from==c.host;ev.by=from;
+ if(ev.k=='msg'){if(!canSpeak(c,from)||!ev.m)return 0;ev.m.by=from;ev.m.ts=Date.now()}
+ else if(ev.k=='role'){if(!own||ev.id==c.host)return 0}
+ else if(ev.k=='mode'){if(!adm||!['all','admins','owner'].includes(ev.mode))return 0}
+ else if(ev.k=='kick'){if(!adm||ev.id==c.host||(c.admins.includes(ev.id)&&!own))return 0;(c.bans=c.bans||[]).push(ev.id)}
+ else if(ev.k=='leave'){if(own)return 0;ev.id=from}
+ else if(ev.k=='chan'||ev.k=='chdel'){if(!adm)return 0;ev.name=String(ev.name||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').slice(0,20);if(!ev.name||(ev.k=='chdel'&&ev.name=='general'))return 0}
+ else if(ev.k!='vote'&&ev.k!='react'&&ev.k!='edit'&&ev.k!='del')return 0;
+ return 1}
+function hostEv(c,ev,from){if(!okEv(c,ev,from))return;let to=[...c.members];apply(c,ev);to.forEach(m=>m!=me&&send(m,{t:'ev',r:c.id,ev}))}
+function meshEv(c,ev,from){if(c.members.includes(from)&&okEv(c,ev,from))apply(c,ev)}
+function emit(c,ev){ev.by=me;if(c.type=='dm'){apply(c,ev);if(c.id!=me)send(c.id,{t:'dm',ev})}else if(c.host==me)hostEv(c,ev,me);else if(conns[c.host]?.open)send(c.host,{t:'req',r:c.id,ev});else{if(!okEv(c,ev,me))return;let to=c.members.filter(m=>m!=me);apply(c,ev);to.forEach(m=>send(m,{t:'mesh',r:c.id,ev}))}}
+function apply(c,ev){let a=ev.by;
+ if(ev.k=='msg'){let m={...ev.m};if(c.msgs.some(x=>x.id==m.id))return;if(m.f&&m.f.b){let f={...m.f},bl=new Blob([f.b],{type:f.ty});delete f.b;attach(f,bl);idb('put',m.id,bl);m.f=f}c.msgs.push(m);if(c.msgs.length>300)c.msgs.shift();if(cur!=c||document.hidden)c.un=(c.un||0)+1}
+ else if(ev.k=='vote'){let m=c.msgs.find(x=>x.id==ev.mid);if(m&&m.poll&&m.poll.o[ev.idx]!==undefined)m.poll.v[a]=ev.idx}
+ else if(ev.k=='react'){let m=c.msgs.find(x=>x.id==ev.mid);if(!m)return;m.re=m.re||{};let l=m.re[ev.e]=m.re[ev.e]||[],i=l.indexOf(a);i<0?l.push(a):l.splice(i,1);if(!l.length)delete m.re[ev.e]}
+ else if(ev.k=='edit'){let m=c.msgs.find(x=>x.id==ev.mid);if(!m||m.by!=a||!m.text)return;m.text=String(ev.text).slice(0,4000);m.ed=1}
+ else if(ev.k=='del'){let m=c.msgs.find(x=>x.id==ev.mid);if(!m||(m.by!=a&&!(c.type=='room'&&isAdm(c,a))&&!(c.type=='dm'&&c.id==me)))return;if(m.f&&m.f.u)URL.revokeObjectURL(m.f.u);idb('del',m.id);c.msgs=c.msgs.filter(x=>x!=m)}
+ else if(ev.k=='chan'){c.chs=c.chs||['general'];if(!c.chs.includes(ev.name))c.chs.push(ev.name)}
+ else if(ev.k=='chdel'){c.chs=(c.chs||['general']).filter(x=>x!=ev.name);c.msgs=c.msgs.filter(m=>(m.ch||'general')!=ev.name);if(CHN[c.id]==ev.name)CHN[c.id]='general'}
+ else if(ev.k=='role'){c.admins=c.admins.filter(x=>x!=ev.id);if(ev.on)c.admins.push(ev.id)}
+ else if(ev.k=='mode')c.mode=ev.mode;
+ else if(ev.k=='kick'||ev.k=='leave'){c.members=c.members.filter(x=>x!=ev.id);c.admins=c.admins.filter(x=>x!=ev.id);if(ev.id==me){delete CH[c.id];toast(ev.k=='kick'?'You were removed from '+c.name:'Left')}}
+ else if(ev.k=='close'){delete CH[c.id];toast(c.name+' was closed by its owner')}
+ save();render()}
+/* ---------- sending ---------- */
+function sendMsg(x){let c=cur;if(!c||!canSpeak(c,me))return toast('You cannot speak here');let m={id:uid(),by:me,ts:Date.now(),...x};if(c.type=='room')m.ch=CHN[c.id]||'general';if(rep){m.rp=rep;rep=null;$('#rb').hidden=true}emit(c,{k:'msg',m})}
+function sendText(){let v=$('#in'),t=v.value.trim();if(!t)return;sendMsg({text:t});v.value='';v.style.height=''}
+async function sendFiles(fl){for(const f of fl){if(f.size>26e6){toast(f.name+': max 25 MB');continue}sendMsg({f:{n:f.name,ty:f.type||'application/octet-stream',sz:f.size,b:await f.arrayBuffer()}})}}
+/* ---------- rendering ---------- */
+function render(){if(SV!='home'&&!CH[SV])SV='home';renderMe();renderRail();renderList();renderChat();renderMem()}
+function renderMe(){$('#me').innerHTML=`${AV(P)}<div class=nm><b>${esc(P.name)}</b><br><small style="color:${STC}">● ${ST}</small></div>`}
+function renderRail(){let rooms=Object.values(CH).filter(c=>c.type=='room'),dmUn=Object.values(CH).filter(c=>c.type=='dm').reduce((s,c)=>s+(c.un||0),0);
+ $('#rail').innerHTML=`<div class="sv logo${SV=='home'?' on':''}" data-v=home title="Direct messages">⬡${dmUn?`<em>${dmUn}</em>`:''}</div><div class=sep></div>`+rooms.map(c=>`<div class="sv${SV==c.id?' on':''}" data-v="${c.id}" title="${esc(c.name)}">${c.kind=='community'?esc((c.name||'?').trim().slice(0,2).toUpperCase()):'👥'}${c.un?`<em>${c.un}</em>`:''}</div>`).join('')+`<div class="sv add" onclick=roomM() title="Create / join a group">＋</div><div class="sv add" onclick=dmM() title="New DM">✉</div>`}
+function renderList(){let c=SV!='home'&&CH[SV];
+ if(c){let ch=CHN[c.id]||'general',chs=c.kind=='community'?(c.chs||['general']):['general'];
+  $('#list').innerHTML=`<div class=rbn>${c.kind=='community'?'🌐':'👥'}</div><div class=rh><span class=nm>${esc(c.name)}</span><small>${c.members.length} members</small></div><button class=inv onclick=info()>🔗 Invite people</button><h6>${c.kind=='community'?'Channels':'Chat'}</h6>`+
+   chs.map(x=>`<div class="it ch2${x==ch&&cur==c?' on':''}" data-h="${esc(x)}"><span class=hi>${x=='general'?'📢':'#'}</span><span class=nm>${esc(x)}</span></div>`).join('')+
+   (c.kind=='community'&&isAdm(c,me)?`<div class="it" data-h="+new"><span class=hi>＋</span><span class=nm>Create channel</span></div>${ch!='general'?`<div class="it" data-h="-del"><span class=hi>🗑</span><span class=nm>Delete #${esc(ch)}</span></div>`:''}`:'');return}
+ let a=Object.values(CH).filter(c=>c.type=='dm').sort((x,y)=>(y.msgs.at(-1)?.ts||0)-(x.msgs.at(-1)?.ts||0));
+ $('#list').innerHTML='<button class=srch onclick=dmM()>🔍 Find or start a conversation</button><h6>Direct messages</h6>'+(a.map(c=>`<div class="it${cur==c?' on':''}" data-c="${c.id}">${avId(c.id)}<span class=nm>${esc(nm(c))}${conns[c.id]?.open?' <i class=dot></i>':''}</span>${c.un?`<em>${c.un}</em>`:''}</div>`).join('')||'<small>None yet</small>')}
+function renderMem(){let c=cur,el=$('#mem');if(!c||c.type!='room'){el.hidden=true;return}el.hidden=false;
+ let on=i=>i==me||conns[i]?.open,it=i=>{let p=i==me?P:PR[i]||{name:i};return`<div class=it data-u="${esc(i)}"><div class=avw>${AV(p)}<i class="sd${on(i)?' on':''}"></i></div><span class=nm style="color:${esc(p.color||'')}">${esc(p.name)}</span>${i==c.host?'<span class=bd>OWNER</span>':c.admins.includes(i)?'<span class=bd>ADMIN</span>':''}</div>`},
+  g=(t,l)=>l.length?`<h6>${t} — ${l.length}</h6>`+l.map(it).join(''):'';
+ el.innerHTML=g('Owner',[c.host])+g('Admin',c.admins)+g('Members',c.members.filter(i=>i!=c.host&&!c.admins.includes(i)))}
+function renderChat(){let c=cur;if(c&&CH[c.id]!==c)cur=c=null;$('#empty').hidden=!!c;$('#chat').hidden=!c;if(!c){$('#tt').textContent='Hivelume';$('#sub').textContent='';return}
+ let ch=CHN[c.id]||'general';
+ $('#tt').textContent=c.type=='dm'?'@ '+nm(c):c.kind=='community'?(ch=='general'?'📢 ':'# ')+ch:'👥 '+nm(c);
+ $('#sub').textContent=c.type=='dm'?(c.id==me?'only on this device':conns[c.id]?.open?'online':'offline / not connected'):(c.kind=='community'?c.name+' · ':'')+c.members.length+' members · '+(c.mode=='all'?'everyone can talk':c.mode=='admins'?'admins only can talk':'only the owner can talk')+(c.host!=me&&!conns[c.host]?.open?' · owner offline (direct mode)':'');
+ let ok=canSpeak(c,me);$('#in').disabled=!ok;$('#in').placeholder=ok?'Message '+(c.type=='dm'?'@'+nm(c):'#'+ch):'🔒 Only certain roles can post here. You can still read and react.';
+ let box=$('#msgs'),bot=box.scrollHeight-box.scrollTop-box.clientHeight<90,vis=c.type=='room'&&c.kind=='community'?c.msgs.filter(m=>(m.ch||'general')==ch):c.msgs,ids=new Set(vis.map(m=>'m'+m.id)),prev=null;
+ [...box.children].forEach(n=>{if(!ids.has(n.id))n.remove()});
+ vis.forEach(m=>{let n=document.getElementById('m'+m.id),p=PR[m.by]||{},s=JSON.stringify([m.text,m.ed,m.re,m.poll,m.f?(m.f.d?2:m.f.u?1:0):0,p.name,(p.av||'').length,c.admins]);
+  if(n&&n.dataset.s==s){prev=n;return}
+  let t=document.createElement('div');t.id='m'+m.id;t.className='m';t.dataset.s=s;t.innerHTML=mh(m,c);
+  if(n)n.replaceWith(t);else prev?prev.after(t):box.prepend(t);prev=t});
+ if(bot)box.scrollTop=box.scrollHeight}
+function mh(m,c){let p=m.by==me?P:PR[m.by]||{name:m.by},r=m.rp&&c.msgs.find(x=>x.id==m.rp),b='',f=m.f;
+ if(m.text)b+=`<div class=t>${esc(m.text).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target=_blank rel=noopener>${u}</a>`)}</div>`;
+ if(f){if(!f.u)b+=`<div class=fc>📄 ${esc(f.n)} <small>(${sz(f.sz)}) – no longer available, ask the sender to resend</small></div>`;
+  else{let u=U(f);if(/^image\//.test(f.ty))b+=`<img class=mi src="${u}" data-a=vw data-i="${m.id}" alt="">`;
+   else if(/^video\//.test(f.ty))b+=`<div class=vp data-a=vw data-i="${m.id}"><video src="${u}#t=0.1" preload=metadata muted playsinline></video><span>▶</span></div>`;
+   else if(/^audio\//.test(f.ty))b+=`<audio controls src="${u}"></audio>`;
+   b+=`<div class=fc>📎 ${esc(f.n)} <small>${sz(f.sz)}</small> <a class=dl href="${u}" download="${esc(f.n)}">⬇ Download</a></div>`}}
+ if(m.poll){let pl=m.poll,tot=Object.keys(pl.v).length,my=pl.v[me];b+=`<div class=pl><b>📊 ${esc(pl.q)}</b>`+pl.o.map((o,i)=>{let n=Object.values(pl.v).filter(x=>x==i).length;return`<div class="po${my===i?' my':''}" data-a=vt data-i="${m.id}" data-x=${i}><i style="width:${tot?n*100/tot:0}%"></i><span>${esc(o)}</span><small>${n}</small></div>`}).join('')+`<small>${tot} vote${tot==1?'':'s'} · tap an option to vote or change your vote</small></div>`}
+ let re=Object.entries(m.re||{}).map(([e,l])=>`<span class="ch${l.includes(me)?' me':''}" data-a=rc data-i="${m.id}" data-e="${e}">${e} ${l.length}</span>`).join(''),
+  bd=c.type=='room'&&isAdm(c,m.by)?`<span class=bd>${m.by==c.host?'OWNER':'ADMIN'}</span>`:'',
+  canDel=m.by==me||(c.type=='dm'&&c.id==me)||(c.type=='room'&&isAdm(c,me));
+ return`<div data-a=pf data-u="${esc(m.by)}">${AV(p)}</div><div class=mb><b data-a=pf data-u="${esc(m.by)}" style="color:${esc(p.color||'')};cursor:pointer">${esc(p.name)}</b>${bd}<small>${new Date(m.ts).toLocaleString([],{hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'})}</small>${m.ed?'<small> (edited)</small>':''}${r?`<div class=qt>↩ ${esc(PR[r.by]?.name||(r.by==me?P.name:''))}: ${esc((r.text||(r.f?r.f.n:'poll')).slice(0,60))}</div>`:''}${b}<div class=re>${re}</div></div><div class=ax><span data-a=em data-i="${m.id}" title=React>😊</span><span data-a=rp data-i="${m.id}" title=Reply>↩</span>${m.by==me&&m.text?`<span data-a=ed data-i="${m.id}" title=Edit>✏️</span>`:''}${canDel?`<span data-a=dx data-i="${m.id}" title=Delete>🗑</span>`:''}</div>`}
+$('#msgs').onclick=e=>{let t=e.target.closest('[data-a]');if(!t||!cur)return;let c=cur,a=t.dataset.a,i=t.dataset.i,m=c.msgs.find(x=>x.id==i);
+ if(a=='pf')return prof(t.dataset.u);if(!m)return;
+ if(a=='rc')emit(c,{k:'react',mid:i,e:t.dataset.e});
+ else if(a=='em')pick(em=>emit(c,{k:'react',mid:i,e:em}));
+ else if(a=='rp'){rep=i;$('#rb').hidden=false;$('#rb span').textContent='Replying to: '+(m.text||m.f?.n||'poll').slice(0,50);$('#in').focus()}
+ else if(a=='vt')emit(c,{k:'vote',mid:i,idx:+t.dataset.x});
+ else if(a=='vw')view(i);
+ else if(a=='ed')ask('Edit message',1,m.text).then(t=>{if(t&&t.trim()&&t!=m.text)emit(c,{k:'edit',mid:i,text:t.trim()})});
+ else if(a=='dx')ask(c.type=='dm'&&c.id==me?'Delete this message?':'Delete this message for everyone?').then(ok=>ok&&emit(c,{k:'del',mid:i}))};
+$('#list').onclick=e=>{let t=e.target.closest('[data-c],[data-h]');if(!t)return;if(t.dataset.c)return openChat(t.dataset.c);let c=CH[SV];if(!c)return;let h=t.dataset.h;if(cur!=c)openChat(c.id,1);
+ if(h=='+new')ask('New channel name',1).then(n=>n&&emit(c,{k:'chan',name:n}));
+ else if(h=='-del'){let n=CHN[c.id]||'general';n=='general'?toast('#general cannot be deleted'):ask('Delete #'+n+' and its messages?').then(ok=>ok&&emit(c,{k:'chdel',name:n}))}
+ else{CHN[c.id]=h;$('#side').classList.remove('open');$('#msgs').innerHTML='';render();$('#msgs').scrollTop=1e9}};
+$('#rail').onclick=e=>{let t=e.target.closest('[data-v]');if(!t)return;let v=t.dataset.v;if(v=='home'){SV='home';renderRail();renderList()}else openChat(v,1)};
+$('#mem').onclick=e=>{let t=e.target.closest('[data-u]');t&&prof(t.dataset.u)};
+function openChat(id,keep){cur=CH[id];if(!cur)return;SV=cur.type=='room'?id:'home';cur.un=0;rep=null;$('#rb').hidden=true;if(!keep)$('#side').classList.remove('open');$('#msgs').innerHTML='';render();$('#msgs').scrollTop=1e9}
+/* ---------- modals ---------- */
+function modal(h,dock){$('#box').onclick=null;$('#box').innerHTML=h;$('#mo').className=dock?'dock':'';$('#mo').hidden=false}
+function closeM(){$('#mo').hidden=true}
+$('#mo').onclick=e=>{if(e.target.id=='mo'&&!LOCK)closeM()};
+function pick(cb){modal('<div class=eg>'+EM.map(e=>`<span>${e}</span>`).join('')+'</div>');$('#box').onclick=e=>{if(e.target.tagName=='SPAN'){cb(e.target.textContent);closeM()}}}
+function dmM(){modal(`<h3>New direct message</h3><p class=mu>Paste your friend's ID. Both of you must be online.</p><input id=x placeholder="Friend ID"><p><button onclick=dmGo()>Start chat</button></p>`)}
+function dmGo(){let id=$('#x').value.trim();if(!id||id==me)return toast('Enter a valid ID');closeM();dmOpen(id)}
+function dmOpen(id){CH[id]=CH[id]||{id,type:'dm',msgs:[]};conn(id);save();openChat(id)}
+function roomM(){modal(`<h3>Create</h3><input id=x placeholder="Name"><p><select id=k><option value=group>👥 Group</option><option value=community>🌐 Community</option></select></p><button onclick=mkRoom()>Create</button><hr><h3>Join with an invite</h3><input id=y placeholder="Paste invite"><p><button class=g onclick=joinGo()>Join</button></p>`)}
+function mkRoom(){let n=$('#x').value.trim();if(!n)return;let id=uid();CH[id]={id,type:'room',name:n,kind:$('#k').value,host:me,mode:'all',admins:[],members:[me],chs:['general'],msgs:[]};closeM();save();openChat(id)}
+function joinGo(){let [h,r]=$('#y').value.trim().split('#');if(!h||!r)return toast('Invalid invite');send(h,{t:'join',r,p:P});closeM();toast('Joining…')}
+function pollM(){modal(`<h3>Create poll</h3><input id=x placeholder="Question"><p><textarea id=y rows=5 placeholder="One option per line (2-8)"></textarea></p><button onclick=pollGo()>Send poll</button>`)}
+function pollGo(){let q=$('#x').value.trim(),o=$('#y').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8);if(!q||o.length<2)return toast('Add a question and 2+ options');closeM();sendMsg({poll:{q,o,v:{}}})}
+function info(){let c=cur;if(!c)return;if(c.type=='dm')return prof(c.id,1);let adm=isAdm(c,me),own=c.host==me,inv=c.host+'#'+c.id;
+ modal(`<h3>${esc(c.name)} <small>${c.kind}</small></h3><p class=mu>Invite link (share it with friends):</p><input readonly value="${inv}" onclick=this.select()><p><button class=g onclick="try{navigator.clipboard.writeText('${inv}').then(()=>toast('Invite copied'),()=>toast('Select the text and copy it'))}catch(e){toast('Select the text and copy it')}">Copy invite</button></p>`+
+ (adm?`<p>Who can speak: <select onchange="emit(cur,{k:'mode',mode:this.value})">${[['all','Everyone'],['admins','Admins only'],['owner','Owner only']].map(o=>`<option value=${o[0]} ${c.mode==o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></p>`:'')+
+ `<h4>Members (${c.members.length})</h4>`+c.members.map(i=>`<div class=it>${avId(i)}<span class=nm>${esc(i==me?P.name:PR[i]?.name||i)} ${i==c.host?'<span class=bd>OWNER</span>':c.admins.includes(i)?'<span class=bd>ADMIN</span>':''}</span>`+
+  (own&&i!=me?`<button class=g onclick="emit(cur,{k:'role',id:'${i}',on:${!c.admins.includes(i)}});info()">${c.admins.includes(i)?'Demote':'Make admin'}</button>`:'')+
+  (adm&&i!=me&&i!=c.host&&(own||!c.admins.includes(i))?`<button class=r onclick="emit(cur,{k:'kick',id:'${i}'});info()">Kick</button>`:'')+'</div>').join('')+
+ `<p><button class=r onclick=leave()>${own?'Delete / close for everyone':'Leave'}</button></p>`)}
+async function leave(){let c=cur;if(!c||!await ask('Are you sure?'))return;if(c.type=='room'){if(c.host==me)c.members.forEach(m=>m!=me&&send(m,{t:'ev',r:c.id,ev:{k:'close',by:me}}));else send(c.host,{t:'req',r:c.id,ev:{k:'leave'}})}delete CH[c.id];cur=null;closeM();save();render()}
+function prof(id,dm){let p=id==me?P:PR[id]||{name:id};modal(`<div class=bn style="${bnS(p)}"></div><div class=pv>${AV(p)}<h3>${esc(p.name)}</h3><p class=mu>${esc(p.bio||'')}</p><small>ID: ${esc(id)}</small><p>${id!=me?`<button onclick="closeM();dmOpen('${esc(id)}')">Message</button> `:`<button onclick=editP()>Edit profile</button>`}${dm?'<button class=r onclick=leave()>Delete chat</button>':''}</p></div>`)}
+function cap(){if($('#pn')){T.name=$('#pn').value;T.bio=$('#pb').value;T.color=$('#pc').value;T.em=$('#pe').value}}
+function ip(k,w,h){cap();pickImg(w,h,d=>{T[k]=d;editP(1)})}
+function editP(keep,first){if(!keep)T={...P};if(first)LOCK=1;modal(`<h3>${LOCK?'Create your profile':'Edit profile'}</h3><div class=bn style="${bnS(T)};cursor:pointer" onclick="ip('bn',600,200)" title="Change banner"></div><div class=pv onclick="ip('av',160,160)" style="cursor:pointer">${AV(T)}</div><p><small>Tap the banner or the picture to upload your own, or just pick a colour and an emoji.</small></p><input id=pn value="${esc(T.name)}" maxlength=30 placeholder="Display name"><p><input id=pe value="${esc(T.em||'')}" maxlength=2 placeholder="Avatar emoji (optional)"></p><p><textarea id=pb rows=3 placeholder="About me">${esc(T.bio)}</textarea></p><p>Profile colour <input id=pc type=color value="${T.color||'#f26b3a'}" onchange="cap();editP(1)"></p><button onclick=saveP()>${LOCK?'Create profile':'Save'}</button> <button class=g onclick="cap();T.av=T.bn='';editP(1)">Remove images</button>`)}
+function saveP(){cap();if(!T.name.trim())T.name=P.name;P=T;LOCK=0;P.em=P.em||'';S('prof',P);Object.values(conns).forEach(c=>c.open&&c.send({t:'hi',p:P}));Object.values(CH).forEach(c=>c.type=='room'&&c.host==me&&c.members.forEach(m=>m!=me&&send(m,{t:'prof',id:me,p:P})));closeM();render()}
+const BGS=['linear-gradient(135deg,#1d2b64,#f8cdda)','linear-gradient(135deg,#0f2027,#2c5364)','linear-gradient(135deg,#ee0979,#ff6a00)','linear-gradient(135deg,#134e5e,#71b280)','linear-gradient(135deg,#4b134f,#c94b4b)','linear-gradient(135deg,#000428,#004e92)','radial-gradient(circle at 20% 20%,#3a1c71,#000)','repeating-linear-gradient(45deg,#1b1b2f,#1b1b2f 12px,#222244 12px,#222244 24px)','#0b132b','#2d2a26','#102a1f','#f3e9d2'];
+function setM(){$('#side').classList.remove('open');if(!cur&&CH[me])openChat(me);modal(`<h3>Customize <button class=g style="float:right" onclick=closeM()>✕ Close</button></h3><p class=mu>Changes show live behind this panel.</p><p>Theme <select onchange="cf('th',this.value)">${['dark','light','amoled'].map(t=>`<option ${CFG.th==t?'selected':''}>${t}</option>`).join('')}</select></p><p>Accent colour <input type=color value="${CFG.ac}" oninput="cf('ac',this.value)"></p><p>Font size <input type=range min=12 max=22 value=${CFG.fs} oninput="cf('fs',+this.value)"></p><p>Roundness <input type=range min=0 max=24 value=${CFG.rad} oninput="cf('rad',+this.value)"></p><p><label><input type=checkbox style="width:auto" ${CFG.cp?'checked':''} onchange="cf('cp',+this.checked)"> Compact messages</label></p><h4>Chat background</h4><div class=bgs>${BGS.map((b,i)=>`<div style="background:${b}" onclick="cf('bg',BGS[${i}])"></div>`).join('')}</div><p>Solid colour <input type=color value="#2b2725" oninput="cf('bg',this.value)"></p><p>Dim background <input type=range min=0 max=80 value=${CFG.dim||0} oninput="cf('dim',+this.value)"></p><p><button class=g onclick="pickImg(1280,720,d=>cf('bg','url('+d+') center/cover'))">Upload image</button> <button class=g onclick="cf('bg','')">Reset</button></p>`,1)}
+function cf(k,v){CFG[k]=v;S('cfg',CFG);applyCfg()}
+function applyCfg(){let s=document.documentElement.style,d=(CFG.dim||0)/100;s.setProperty('--ac',CFG.ac);s.setProperty('--fs',CFG.fs+'px');s.setProperty('--rad',CFG.rad+'px');document.body.className=CFG.th+(CFG.cp?' cp':'');$('#msgs').style.background=CFG.bg?(d?`linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),`:'')+CFG.bg:''}
+/* ---------- media viewer ---------- */
+function view(id){vl=cur.msgs.filter(m=>m.f&&m.f.u&&/^(image|video)\//.test(m.f.ty));vi=vl.findIndex(m=>m.id==id);lb()}
+function lb(){let m=vl[vi];if(!m)return lbx();let f=m.f,u=U(f),v=/^video/.test(f.ty);$('#lb').hidden=false;
+ $('#lb').innerHTML=`<div class=lt><span>${esc(f.n)} (${vi+1}/${vl.length})</span><a class=dl style="color:#fff" href="${u}" download="${esc(f.n)}">⬇ Save</a><button class=g onclick=lbx()>✕</button></div><div class=ls>${vl.length>1?'<b class=nv style=left:4px onclick=lbn(-1)>‹</b><b class=nv style=right:4px onclick=lbn(1)>›</b>':''}${v?`<video id=vv src="${u}" autoplay playsinline></video>`:`<img id=pic src="${u}">`}</div>`+(v?`<div class=vc><button id=pp>⏸</button><input type=range id=sk min=0 max=1000 value=0><small id=tm>0:00</small><button class=g id=mu2>🔊</button><input type=range id=vo min=0 max=1 step=.05 value=1 style=width:70px><button class=g id=sp>1×</button><button class=g id=fsb>⛶</button></div>`:'<div class=vc><small>Click to zoom · scroll wheel or pinch</small></div>');
+ if(v){let e=$('#vv'),t=s=>(s/60|0)+':'+('0'+(s%60|0)).slice(-2),sp=[1,1.5,2,.5],si=0;$('#pp').onclick=()=>e.paused?e.play():e.pause();e.onclick=$('#pp').onclick;e.onplay=()=>$('#pp').textContent='⏸';e.onpause=()=>$('#pp').textContent='▶';e.ontimeupdate=()=>{$('#sk').value=e.duration?e.currentTime/e.duration*1000:0;$('#tm').textContent=t(e.currentTime)+'/'+t(e.duration||0)};$('#sk').oninput=function(){e.currentTime=this.value/1000*e.duration};$('#vo').oninput=function(){e.volume=this.value};$('#mu2').onclick=()=>{e.muted=!e.muted;$('#mu2').textContent=e.muted?'🔇':'🔊'};$('#sp').onclick=()=>{si=(si+1)%4;e.playbackRate=sp[si];$('#sp').textContent=sp[si]+'×'};$('#fsb').onclick=()=>e.requestFullscreen&&e.requestFullscreen()}
+ else{let i=$('#pic'),z=1,set=()=>i.style.transform='scale('+z+')';i.onclick=()=>{z=z>1?1:2.5;set()};i.onwheel=ev=>{ev.preventDefault();z=Math.min(6,Math.max(1,z-ev.deltaY/300));set()}}}
+function lbn(d){vi=(vi+d+vl.length)%vl.length;lb()}
+function lbx(){let v=$('#vv');v&&v.pause();$('#lb').hidden=true;$('#lb').innerHTML=''}
+/* ---------- files survive reloads (IndexedDB) ---------- */
+const idbReq=new Promise(r=>{try{let q=indexedDB.open('hive',1);q.onupgradeneeded=()=>q.result.createObjectStore('f');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+async function idb(op,k,v){let d=await idbReq;if(!d)return;return new Promise(r=>{try{let s=d.transaction('f',op=='get'?'readonly':'readwrite').objectStore('f'),q=op=='put'?s.put(v,k):op=='del'?s.delete(k):s.get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()}catch(e){r()}})}
+async function restore(){for(const c of Object.values(CH))for(const m of c.msgs)if(m.f&&!m.f.u){let b=await idb('get',m.id);if(b)attach(m.f,b)}render()}
+/* ---------- voice & video calls (1:1 in DMs, mesh in groups) ---------- */
+async function media(v){if(LS)return LS;try{LS=await navigator.mediaDevices.getUserMedia({audio:true,video:!!v})}catch(e){try{LS=await navigator.mediaDevices.getUserMedia({audio:true});toast('Camera unavailable - audio only')}catch(x){toast('Allow microphone/camera access (needs https or a local file)');return null}}return LS}
+function tile(id,stream,self){let t=document.getElementById('t'+id);if(!t){t=document.createElement('div');t.id='t'+id;t.innerHTML=`<video autoplay playsinline ${self?'muted':''}></video><span>${AV(self?P:PR[id]||{name:id})}</span><b>${esc(self?'You':PR[id]?.name||id)}</b>`;$('#cg').append(t)}let v=t.querySelector('video');if(v.srcObject!==stream)v.srcObject=stream;v.hidden=!stream.getVideoTracks().length}
+function callUI(){$('#cl').hidden=false;$('#cl').innerHTML='<div id=cg></div><div id=cb><button class=g id=cm>🎤 Mute</button><button class=g id=cv>📷 Camera</button><button class=r id=ce>Hang up</button></div>';$('#cm').onclick=()=>{let t=LS.getAudioTracks()[0];if(t){t.enabled=!t.enabled;$('#cm').textContent=t.enabled?'🎤 Mute':'🔇 Unmute'}};$('#cv').onclick=()=>{let t=LS.getVideoTracks()[0];if(t){t.enabled=!t.enabled;$('#cv').textContent=t.enabled?'📷 Camera':'🚫 Camera off'}};$('#ce').onclick=endCall;tile(me,LS,1)}
+async function startCall(v){let c=cur;if(!c||c.id==me)return toast('Open a chat with someone first');if(!peer||!peer.open)return toast('Not connected yet');let ids=c.type=='dm'?[c.id]:c.members.filter(m=>m!=me);if(!await media(v))return;callUI();ids.forEach(id=>dial(id,v,c.id))}
+function dial(id,v,r){if(calls[id]||!LS)return;hook(peer.call(id,LS,{metadata:{v:v?1:0,r,from:P.name}}))}
+function hook(cl){calls[cl.peer]=cl;cl.on('stream',s=>{if($('#cg'))tile(cl.peer,s)});cl.on('close',()=>{if(calls[cl.peer]==cl)delete calls[cl.peer];let t=document.getElementById('t'+cl.peer);t&&t.remove()});cl.on('error',()=>{delete calls[cl.peer]})}
+function endCall(){Object.values(calls).forEach(c=>c.close());calls={};LS&&LS.getTracks().forEach(t=>t.stop());LS=null;$('#cl').hidden=true;$('#cl').innerHTML=''}
+async function onCall(cl){let m=cl.metadata||{};if(LS){cl.answer(LS);hook(cl);return}if(!await ask((m.from||cl.peer)+' is calling you ('+(m.v?'video':'voice')+'). Answer?'))return cl.close();media(m.v).then(s=>{if(!s)return cl.close();callUI();cl.answer(s);hook(cl);let r=CH[m.r];if(r&&r.type=='room')r.members.forEach(x=>x!=me&&x!=cl.peer&&dial(x,m.v,m.r))})}
+/* ---------- input wiring ---------- */
+$('#in').onkeydown=e=>{if(e.key=='Enter'&&!e.shiftKey&&innerWidth>700){e.preventDefault();sendText()}};
+$('#in').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'};
+$('#in').onpaste=e=>{let f=e.clipboardData.files;if(f.length){e.preventDefault();sendFiles(f)}};
+$('#fi').onchange=function(){sendFiles([...this.files]);this.value=''};
+$('#main').ondragover=e=>e.preventDefault();$('#main').ondrop=e=>{e.preventDefault();sendFiles([...e.dataTransfer.files])};
+document.onkeydown=e=>{if($('#lb').hidden)return;if(e.key=='Escape')lbx();if(e.key=='ArrowLeft')lbn(-1);if(e.key=='ArrowRight')lbn(1)};
+applyCfg();P.em=P.em||'';P.bio=P.bio||'';P.av=P.av||'';P.bn=P.bn||'';PR.hive={name:'Hivelume',color:'#f26b3a',em:'⬡'};
+if(!CH[me])CH[me]={id:me,type:'dm',msgs:[{id:uid(),by:'hive',ts:Date.now(),text:'Welcome to Hivelume ⬡\nThis is your private notes chat. Try emojis, polls 📊, files ＋ and ⚙ Customize (themes + chat backgrounds) right here.\nShare your ID (📋) with a friend to start a real DM, or create a group / community with ＋ on the left.'}]};
+openChat(me);restore();typeof Peer=='undefined'?toast('Loading PeerJS…'):boot();if(NEW)editP(0,1);
+</script></body></html>
