@@ -9,6 +9,7 @@ self.addEventListener('push', (event) => {
       body: data.body || 'New message',
       tag: data.tag || 'hivelume',
       renotify: true,
+      silent: false,
       data: { url: '/' }
     });
   })());
