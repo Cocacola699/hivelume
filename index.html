@@ -282,7 +282,7 @@ const AV=p=>p.av?`<img class=av src="${p.av}">`:`<div class=av style="background
  gifOK=(c,i)=>!isCom(c)||!!(VR[i]||(i==me&&P.paid)||PR[i]?.paid),
  pollOK=(c,i)=>gifOK(c,i),
  icOk=s=>typeof s=='string'&&/^data:image\//.test(s)&&s.length<4e4,
- MODNOTE='this message has been moderated by hivelume ai',
+ MODNOTE='this message was moderated by guardian ai',
  modWrap=m=>{if(!m)return m;if(m.mod){m.mod=1;m.hid=String(m.hid||'').slice(0,2000);m.text=MODNOTE}else{delete m.hid;delete m.mod}return m},
  mediaLink=t=>/https?:\/\/\S*(giphy|tenor)\.com|\.(gif|png|jpe?g|webp|mp4|webm)(\?|#|\s|$)/i.test(String(t||'')),
  ytId=u=>{try{let url=new URL(String(u).replace(/[),.;!?]+$/,'')),h=url.hostname.replace(/^(www|m)\./,''),id='';if(h=='youtu.be')id=(url.pathname.split('/').filter(Boolean)[0]||'');else if(h=='youtube.com'||h=='youtube-nocookie.com'||h=='music.youtube.com'){id=url.searchParams.get('v')||'';if(!id){let p=url.pathname.match(/\/(?:embed|shorts|live|v)\/([^/?#]+)/);if(p)id=p[1]}}return /^[\w-]{11}$/.test(id)?id:''}catch(e){return ''}},
