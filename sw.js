@@ -14,7 +14,7 @@ async function show(data) {
   await self.registration.showNotification(data.title || 'Hivelume', {
     body: data.body || 'New message',
     icon: '/icon.svg',
-    tag: 'hive-' + id + '-' + Date.now(),
+    tag: 'hive-' + id,
     renotify: true,
     silent: false,
     timestamp: Date.now(),
