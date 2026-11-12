@@ -2,14 +2,13 @@
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
-function looking(client) {
-  if (typeof client.focused === 'boolean') return client.focused;
+function onScreen(client) {
   return client.visibilityState === 'visible';
 }
 
 async function show(data) {
   const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-  if (list.some(looking)) return;
+  if (list.some(onScreen)) return;
   const id = String(data.tag || 'dm').slice(0, 80);
   await self.registration.showNotification(data.title || 'Hivelume', {
     body: data.body || 'New message',
