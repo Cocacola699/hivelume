@@ -37,7 +37,7 @@ self.addEventListener('push', (event) => {
 self.addEventListener('message', (event) => {
   const data = event.data || {};
   if (data.t !== 'note') return;
-  event.waitUntil(show(data, false));
+  event.waitUntil(show(data, !!data.force));
 });
 
 self.addEventListener('notificationclick', (event) => {
